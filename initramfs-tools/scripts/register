@@ -1,0 +1,31 @@
+#!/bin/sh
+PREREQ=""
+prereqs()
+{
+     echo "$PREREQ"
+}
+
+case $1 in
+prereqs)
+     prereqs
+     exit 0
+     ;;
+esac
+
+mountroot() {
+  modprobe af_packet
+  
+  wait_for_udev 10
+
+  configure_networking
+
+  lldpd -r
+
+  /bin/register
+
+  echo "Shutting down, press any key to abort and spawn shell"
+  ( sleep 60 && halt -f ) &
+  read && kill $!
+
+	/bin/sh
+}
