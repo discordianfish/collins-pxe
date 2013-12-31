@@ -8,14 +8,16 @@ RUN apt-get update
 RUN apt-get upgrade -y
 RUN DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
     apt-get install -y -q initramfs-tools lldpd lshw linux-image \
-		dnsmasq iptables golang git curl
+		dnsmasq iptables git curl
+
+RUN curl -s https://go.googlecode.com/files/go1.2.linux-amd64.tar.gz | tar -C /usr/local -xzf -
 
 WORKDIR /collins-pxe
 
 ADD . /collins-pxe
 
 RUN git clone https://github.com/discordianfish/banksman.git && \
-    cd banksman && go build banksman.go && mv banksman /bin
+    cd banksman && /usr/local/go/bin/go build banksman.go && mv banksman /bin
 
 RUN mkinitramfs -v -d ./initramfs-tools -o static/registration-initrd.gz `echo /boot/vmlinuz-*|sed 's/.*vmlinuz-//'`
 RUN cp /boot/vmlinuz-* static/kernel
