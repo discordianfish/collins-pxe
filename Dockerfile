@@ -8,7 +8,7 @@ RUN apt-get update
 RUN apt-get upgrade -y
 RUN DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
     apt-get install -y -q initramfs-tools lldpd lshw linux-image \
-		dnsmasq iptables git curl
+		dnsmasq iptables git curl socat
 
 RUN curl -s https://go.googlecode.com/files/go1.2.linux-amd64.tar.gz | tar -C /usr/local -xzf -
 

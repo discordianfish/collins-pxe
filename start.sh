@@ -20,10 +20,13 @@ BANKSMAN_PORT=8080
 BANKSMAN_URL="http://$IP:$BANKSMAN_PORT"
 
 echo Starting banksman
-banksman -uri "$(echo $COLLINS_PORT | sed 's/tcp/http/')/api" \
+banksman -uri "http://$IP:9000/api" \
 				 -listen "$IP:$BANKSMAN_PORT" \
 				 -kernel "$BANKSMAN_URL/static/kernel" \
 				 -initrd "$BANKSMAN_URL/static/registration-initrd.gz" &
+
+echo Starting socat/collins proxy
+socat TCP-LISTEN:9000,fork $(echo $COLLINS_PORT|tr -d '/') &
 
 echo Starting DHCP+TFTP server...
 dnsmasq --interface=eth1 \
