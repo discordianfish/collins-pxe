@@ -31,4 +31,4 @@ dnsmasq --interface=eth1 \
   --enable-tftp --tftp-root=`pwd`/static/ --no-daemon \
   --dhcp-match=set:ipxe,175 \
   --dhcp-boot=tag:!ipxe,undionly.kpxe \
-  --dhcp-boot="tag:ipxe,$BANKSMAN_URL/ipxe/\${serial}"
+  --dhcp-boot="tag:ipxe,$BANKSMAN_URL/ipxe/\${uuid}"

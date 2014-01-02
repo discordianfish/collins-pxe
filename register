@@ -49,14 +49,14 @@ done
 if [ -z "$collins_url" -o \
 		 -z "$collins_user" -o \
 		 -z "$collins_password" -o \
-		 -z "$collins_serial" ]
+		 -z "$collins_tag" ]
 then
   echo "collins parameters not found in /proc/cmdline:"
 	cat /proc/cmdline
 	exit 1
 fi
 
-asset_url="$collins_url/asset/$collins_serial"
+asset_url="$collins_url/asset/$collins_tag"
 
 call $asset_url
 if [ -n "$ASSET_STATUS" ]
@@ -71,7 +71,7 @@ else
 	collins "Creating asset" -X PUT -d "generate_ipmi=false" $asset_url
 fi
 
-echo "Registering $collins_serial:"
+echo "Registering $collins_tag:"
 echo -n " - Waiting for lldp"
 while [ -z "`lldpctl -f keyvalue`" ]
 do
