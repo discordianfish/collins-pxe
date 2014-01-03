@@ -25,22 +25,6 @@ log() {
       "$asset_url/log"
 }
 
-collins() {
-  reason=$1
-	shift
-  call "$@"
-	# FIXME:
-	# Unfortuntately collins doesn't provide a common status variable
-	# for all api endpoints. Sometimes it's SUCESS, sometimes
-	# "$status" == "error"... See https://github.com/tumblr/collins/issues/112
-  if [ "$SUCCESS" != "true" ]
-  then
-    log "$reason: $data_message" "CRITICAL"
-
-    return 1
-  fi
-}
-
 for f in `cat /proc/cmdline | tr ' ' '\n' | grep ^collins_`
 do
     export $f
@@ -68,7 +52,12 @@ then
 	fi
   log "Asset already registered" "WARNING"
 else
-	collins "Creating asset" -X PUT -d "generate_ipmi=false" $asset_url
+	call -X PUT -d "generate_ipmi=false" $asset_url
+	if [ "$status" == "error" ]
+	then
+		log "Couldn't create asset: $data_message" "CRITICAL"
+		exit 1
+	fi
 fi
 
 echo "Registering $collins_tag:"
@@ -91,8 +80,12 @@ LLDP_TMP=`mktemp`
 LSHW_TMP=`mktemp`
 lldpctl -f xml > "$LLDP_TMP"
 lshw      -xml > "$LSHW_TMP"
-collins "Updating asset data" \
-				--data-urlencode "lldp@$LLDP_TMP" \
-        --data-urlencode "lshw@$LLDP_TMP" \
-        --data-urlencode "CHASSIS_TAG=$RACK" \
-        $asset_url
+#FIXME: set CHASSIS_TAG
+call --data-urlencode "lldp@$LLDP_TMP" \
+     --data-urlencode "lshw@$LLDP_TMP" \
+     --data-urlencode "CHASSIS_TAG=`cat /sys/class/dmi/id/product_serial`" \
+     $asset_url
+if [ "$status" == "error" ]
+then
+	log "updating asset failed: $data_message"
+fi
