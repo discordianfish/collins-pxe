@@ -80,7 +80,6 @@ LLDP_TMP=`mktemp`
 LSHW_TMP=`mktemp`
 lldpctl -f xml > "$LLDP_TMP"
 lshw      -xml > "$LSHW_TMP"
-#FIXME: set CHASSIS_TAG
 call --data-urlencode "lldp@$LLDP_TMP" \
      --data-urlencode "lshw@$LLDP_TMP" \
      --data-urlencode "CHASSIS_TAG=`cat /sys/class/dmi/id/product_serial`" \

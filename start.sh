@@ -19,11 +19,16 @@ LAST=`IFS=.;set -- $IP; echo $1.$2.$3.230`
 BANKSMAN_PORT=8080
 BANKSMAN_URL="http://$IP:$BANKSMAN_PORT"
 
+
+[ -n "$COLLINS_USER" ] && BANKSMAN_OPTS="-user $COLLINS_USER"
+[ -n "$COLLINS_PASS" ] && BANKSMAN_OPTS="$BANKSMAN_OPTS -pass $COLLINS_PASS"
+
 echo Starting banksman
 banksman -uri "http://$IP:9000/api" \
 				 -listen "$IP:$BANKSMAN_PORT" \
 				 -kernel "$BANKSMAN_URL/static/kernel" \
-				 -initrd "$BANKSMAN_URL/static/registration-initrd.gz" &
+				 -initrd "$BANKSMAN_URL/static/registration-initrd.gz" \
+				 $BANKSMAN_OPTS &
 
 echo Starting socat/collins proxy
 socat TCP-LISTEN:9000,fork $(echo $COLLINS_PORT|tr -d '/') &
