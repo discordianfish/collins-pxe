@@ -21,7 +21,7 @@ BANKSMAN_URL="http://$IP:$BANKSMAN_PORT"
 
 
 [ -n "$COLLINS_USER" ] && BANKSMAN_OPTS="-user $COLLINS_USER"
-[ -n "$COLLINS_PASS" ] && BANKSMAN_OPTS="$BANKSMAN_OPTS -pass $COLLINS_PASS"
+[ -n "$COLLINS_PASS" ] && BANKSMAN_OPTS="$BANKSMAN_OPTS -password $COLLINS_PASS"
 
 echo Starting banksman
 banksman -uri "http://$IP:9000/api" \
