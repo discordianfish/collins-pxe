@@ -22,7 +22,7 @@ log() {
   severity=$2
   echo "$severity: $message"
   call -X PUT -d "message=$message" -d type="$severity" \
-      "$asset_url/log"
+    "$asset_url/log"
 }
 
 for f in `cat /proc/cmdline | tr ' ' '\n' | grep ^collins_`
@@ -31,13 +31,13 @@ do
 done
 
 if [ -z "$collins_url" -o \
-		 -z "$collins_user" -o \
-		 -z "$collins_password" -o \
-		 -z "$collins_tag" ]
+     -z "$collins_user" -o \
+     -z "$collins_password" -o \
+     -z "$collins_tag" ]
 then
   echo "collins parameters not found in /proc/cmdline:"
-	cat /proc/cmdline
-	exit 1
+  cat /proc/cmdline
+  exit 1
 fi
 
 asset_url="$collins_url/asset/$collins_tag"
@@ -47,33 +47,33 @@ if [ -n "$ASSET_STATUS" ]
 then
   if [ "$ASSET_STATUS" == "Allocated" ]
   then
-      log "Asset already allocated" "CRITICAL" 
-      exit 1
-	fi
+    log "Asset already allocated" "CRITICAL" 
+    exit 1
+  fi
   log "Asset already registered" "WARNING"
 else
-	call -X PUT -d "generate_ipmi=false" $asset_url
-	if [ "$status" == "error" ]
-	then
-		log "Couldn't create asset: $data_message" "CRITICAL"
-		exit 1
-	fi
+  call -X PUT -d "generate_ipmi=false" $asset_url
+  if [ "$status" == "error" ]
+  then
+    log "Couldn't create asset: $data_message" "CRITICAL"
+    exit 1
+  fi
 fi
 
 echo "Registering $collins_tag:"
 echo -n " - Waiting for lldp"
 while [ -z "`lldpctl -f keyvalue`" ]
 do
-	i=$((i+1))
+  i=$((i+1))
   echo -n '.'
   sleep 1
-	if [ "$i" -gt "$RETRYN" ]
-	then
-		echo "[ERR]"
-		log "lldpctl failed" "CRITICAL"
-		LLDP_FAILED=1
-		break
-	fi
+  if [ "$i" -gt "$RETRYN" ]
+  then
+    echo "[ERR]"
+    log "lldpctl failed" "CRITICAL"
+    LLDP_FAILED=1
+    break
+  fi
 done
 echo "[OK]"
 
@@ -83,7 +83,7 @@ echo "[OK]"
 if [ -z "$LLDP_FAILED" ]
 then
   LLDP_TMP=`mktemp`
-	lldpctl -f xml > "$LLDP_TMP"
+  lldpctl -f xml > "$LLDP_TMP"
 else
   LLDP_TMP="/etc/fake-lldp.xml"
 fi
@@ -98,5 +98,5 @@ call --data-urlencode "lldp@$LLDP_TMP" \
      $asset_url
 if [ "$status" == "error" ]
 then
-	log "updating asset failed: $data_message"
+  log "updating asset failed: $data_message"
 fi
