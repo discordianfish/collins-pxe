@@ -23,6 +23,6 @@ RUN mkinitramfs -v -d ./initramfs-tools -o static/registration-initrd.gz `echo /
 RUN cp /boot/vmlinuz-* static/kernel
 ADD http://boot.ipxe.org/undionly.kpxe /collins-pxe/static/
 ADD https://raw.github.com/jpetazzo/pipework/master/pipework /sbin/
-RUN chmod a+x /sbin/pipework
+RUN chmod a+x /sbin/pipework && find /collins-pxe/static/ -type f -exec chmod 644 {} \;
 
 ENTRYPOINT [ "./start.sh" ]
