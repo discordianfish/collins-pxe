@@ -24,7 +24,7 @@ BANKSMAN_URL="http://$IP:$BANKSMAN_PORT"
 [ -n "$COLLINS_PASS" ] && BANKSMAN_OPTS="$BANKSMAN_OPTS -password $COLLINS_PASS"
 
 echo Starting banksman
-banksman -uri "http://$IP:9000/api" \
+/banksman/banksman -uri "http://$IP:9000/api" \
 				 -listen "$IP:$BANKSMAN_PORT" \
 				 -kernel "$BANKSMAN_URL/static/kernel" \
 				 -initrd "$BANKSMAN_URL/static/registration-initrd.gz" \
