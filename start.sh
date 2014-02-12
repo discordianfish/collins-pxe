@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
 
-echo Setting up iptables...
-iptables -t nat -A POSTROUTING -j MASQUERADE
-
 echo Waiting for pipework to give us the eth1 interface...
 /sbin/pipework --wait
 
