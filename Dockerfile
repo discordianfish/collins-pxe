@@ -1,11 +1,9 @@
 FROM fish/banksman
 MAINTAINER Johannes 'fish' Ziemke <fish@docker.com>
 
-RUN echo 'deb http://archive.ubuntu.com/ubuntu precise main universe' > \
-    /etc/apt/sources.list
+RUN dpkg-divert --local --rename /usr/bin/ischroot && ln -sf /bin/true /usr/bin/ischroot
 
-RUN apt-get update
-RUN apt-get upgrade -y
+RUN apt-get -q update
 RUN DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
     apt-get install -y -q initramfs-tools lldpd lshw linux-image \
     dnsmasq iptables socat ipmitool
