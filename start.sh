@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+[ -n "$1" ] && DNSMASQ_OPTS="--dhcp-option=option:router,$1"
 
 echo Waiting for pipework to give us the eth1 interface...
 /sbin/pipework --wait
@@ -36,4 +37,5 @@ dnsmasq --interface=eth1 \
   --enable-tftp --tftp-root=`pwd`/static/ --no-daemon \
   --dhcp-match=set:ipxe,175 \
   --dhcp-boot=tag:!ipxe,undionly.kpxe \
-  --dhcp-boot="tag:ipxe,$BANKSMAN_URL/ipxe/\${uuid}"
+  --dhcp-boot="tag:ipxe,$BANKSMAN_URL/ipxe/\${uuid}" \
+  $DNSMASQ_OPTS
