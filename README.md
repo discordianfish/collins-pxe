@@ -46,9 +46,3 @@ For more details, see @jpetazzo's article on
 
 For adding ipxe configurations, see
 [banksman documentation](https://github.com/discordianfish/banksman#quick-start).
-
-
-# Status
-
-This is work in progress and never installed an actual system. So take
-it as a example or implementation idea.
