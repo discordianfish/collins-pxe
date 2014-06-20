@@ -23,24 +23,9 @@ This example expects your container to be called `collins-server`.
 Now you can start the collins-pxe container and link against the
 collins container:
 
-    $ ID=$(sudo docker run -i -t -link collins-server:collins collins-pxe)
+    $ ID=$(sudo docker run --net host -link collins-server:collins collins-pxe 10.20.0.1/24 eth0)
 
-Since the container acts as a dhcp server, we're using
-[pipework](https://github.com/jpetazzo/pipework) to create a new
-interface within the container:
-
-    $ pipework br0 $ID 192.168.242.1/24
-
-*You can use whatever network you prefer*
-
-Now the container is serving DHCP requests on br0. If you want to offer
-DHCP on your host's ethernet, you need to add eth0 to your bridge:
-
-    $ brctl addif br0 eth0
-
-For more details, see @jpetazzo's article on
-[Network booting machines with a PXE server running in a Docker container](http://jpetazzo.github.io/2013/12/07/pxe-netboot-docker/).
-
+Since the container acts as a dhcp server, we need to use Docker's host networking (`-net host`).
 
 # Configuration
 

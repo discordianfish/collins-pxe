@@ -1,13 +1,22 @@
 #!/bin/bash
 set -e
-[ -n "$1" ] && DNSMASQ_OPTS="--dhcp-option=option:router,$1"
+if [ -z "$2" ]
+then
+  echo "$0 pxe-server-ip/mask interface [default gw]"
+  exit 1
+fi
 
-echo Waiting for pipework to give us the eth1 interface...
-/sbin/pipework --wait
-
-NET=`ip addr show dev eth1|awk '/inet[^6]/ {print $2}'`
+NET=$1
+DEV=$2
+[ -n "$3" ] && DNSMASQ_OPTS="--dhcp-option=option:router,$3"
 
 IP=`echo $NET|cut -d/ -f1`
+if [ -z "$IP" ]
+then
+  echo "Invalid network address '$NET'"
+  exit 1
+fi
+
 MASK_CIDR=`echo $NET|cut -d/ -f2`
 MASK=`perl -e 'print join ".", unpack "C4", pack "B*", "1" x $ARGV[0] . "0" x (32 - $ARGV[0])' $MASK_CIDR`
 
