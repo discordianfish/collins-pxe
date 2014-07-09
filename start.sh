@@ -2,27 +2,19 @@
 set -e
 if [ -z "$3" ]
 then
-  echo "$0 collins-addr pxe-server-ip/mask interface [default gw]"
+  echo "$0 collins-addr first,last interface [default gw]"
   exit 1
 fi
 
 COLLINS=$1
-NET=$2
+RANGE=$2
 DEV=$3
 [ -n "$4" ] && DNSMASQ_OPTS="--dhcp-option=option:router,$4"
 
+NET=`ip addr show $DEV | awk '/inet / {print $2}'`
 IP=`echo $NET|cut -d/ -f1`
-if [ -z "$IP" ]
-then
-  echo "Invalid network address '$NET'"
-  exit 1
-fi
-
-MASK_CIDR=`echo $NET|cut -d/ -f2`
+MASK_CIDR=`echo $NET|cut -d/ -f1`
 MASK=`perl -e 'print join ".", unpack "C4", pack "B*", "1" x $ARGV[0] . "0" x (32 - $ARGV[0])' $MASK_CIDR`
-
-FIRST=`IFS=.;set -- $IP; echo $1.$2.$3.$(( $4 + 1))`
-LAST=`IFS=.;set -- $IP; echo $1.$2.$3.230`
 
 BANKSMAN_PORT=8080
 BANKSMAN_URL="http://$IP:$BANKSMAN_PORT"
@@ -32,18 +24,15 @@ BANKSMAN_URL="http://$IP:$BANKSMAN_PORT"
 [ -n "$COLLINS_PASS" ] && BANKSMAN_OPTS="$BANKSMAN_OPTS -password $COLLINS_PASS"
 
 echo Starting banksman
-/banksman/banksman -uri "http://$IP:9000/api" \
+/banksman/banksman -uri "http://$COLLINS/api" \
 				 -listen "$IP:$BANKSMAN_PORT" \
 				 -kernel "$BANKSMAN_URL/static/kernel" \
 				 -initrd "$BANKSMAN_URL/static/registration-initrd.gz" \
 				 $BANKSMAN_OPTS &
 
-echo Starting socat/collins proxy
-socat TCP-LISTEN:9000,fork $COLLINS &
-
 echo Starting DHCP+TFTP server...
-dnsmasq --interface=eth1 \
-  --dhcp-range=$FIRST,$LAST,$MASK,1h \
+dnsmasq --interface=$DEV \
+  --dhcp-range=$RANGE,$MASK,1h \
   --enable-tftp --tftp-root=`pwd`/static/ --no-daemon \
   --dhcp-match=set:ipxe,175 \
   --dhcp-boot=tag:!ipxe,undionly.kpxe \
