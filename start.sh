@@ -1,14 +1,15 @@
 #!/bin/bash
 set -e
-if [ -z "$2" ]
+if [ -z "$3" ]
 then
-  echo "$0 pxe-server-ip/mask interface [default gw]"
+  echo "$0 collins-addr pxe-server-ip/mask interface [default gw]"
   exit 1
 fi
 
-NET=$1
-DEV=$2
-[ -n "$3" ] && DNSMASQ_OPTS="--dhcp-option=option:router,$3"
+COLLINS=$1
+NET=$2
+DEV=$3
+[ -n "$4" ] && DNSMASQ_OPTS="--dhcp-option=option:router,$4"
 
 IP=`echo $NET|cut -d/ -f1`
 if [ -z "$IP" ]
@@ -38,7 +39,7 @@ echo Starting banksman
 				 $BANKSMAN_OPTS &
 
 echo Starting socat/collins proxy
-socat TCP-LISTEN:9000,fork $(echo $COLLINS_PORT|tr -d '/') &
+socat TCP-LISTEN:9000,fork $COLLINS &
 
 echo Starting DHCP+TFTP server...
 dnsmasq --interface=eth1 \
