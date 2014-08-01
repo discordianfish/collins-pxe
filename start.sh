@@ -13,7 +13,7 @@ DEV=$3
 
 NET=`ip addr show $DEV | awk '/inet / {print $2}'`
 IP=`echo $NET|cut -d/ -f1`
-MASK_CIDR=`echo $NET|cut -d/ -f1`
+MASK_CIDR=`echo $NET|cut -d/ -f2`
 MASK=`perl -e 'print join ".", unpack "C4", pack "B*", "1" x $ARGV[0] . "0" x (32 - $ARGV[0])' $MASK_CIDR`
 
 BANKSMAN_PORT=8080
