@@ -18,7 +18,8 @@ mkdir -p ${DESTDIR}/var/run/lldpd
 
 cp -v etc/*             ${DESTDIR}/etc
 cp -v register          ${DESTDIR}/bin
-cp -v /etc/resolv.conf  ${DESTDIR}/etc
+
+echo nameserver 8.8.8.8 > ${DESTDIR}/etc/resolv.conf
 
 for b in curl lshw lldpd lldpctl
 do
