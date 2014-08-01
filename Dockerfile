@@ -5,7 +5,7 @@ RUN dpkg-divert --local --rename /usr/bin/ischroot && ln -sf /bin/true /usr/bin/
 
 RUN apt-get -q update
 RUN DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
-    apt-get install -y -q initramfs-tools lldpd lshw linux-image \
+    apt-get install -y -q initramfs-tools lldpd lshw linux-image-generic \
     dnsmasq iptables socat ipmitool
 
 WORKDIR /collins-pxe
