@@ -26,6 +26,8 @@ Now you can start the collins-pxe container and point it to collins:
 
 Since the container acts as a dhcp server, we need to use Docker's host networking (`-net host`).
 
+If you need to pass custom config to banksman, you can set the BANKSMAN_OPT env variable.
+
 # Configuration
 
 For adding ipxe configurations, see
