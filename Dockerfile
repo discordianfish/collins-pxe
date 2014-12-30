@@ -1,4 +1,4 @@
-FROM dckr/banksman
+FROM dckr/banksman:latest
 MAINTAINER Johannes 'fish' Ziemke <fish@docker.com>
 
 RUN dpkg-divert --local --rename /usr/bin/ischroot && ln -sf /bin/true /usr/bin/ischroot

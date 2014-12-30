@@ -9,7 +9,7 @@ fi
 COLLINS=$1
 RANGE=$2
 DEV=$3
-[ -n "$4" ] && DNSMASQ_OPTS="--dhcp-option=option:router,$4"
+[ -n "$4" ] && DNSMASQ_OPTS="$DNSMASQ_OPTS --dhcp-option=option:router,$4"
 
 NET=`ip addr show $DEV | awk '/inet / {print $2}'`
 IP=`echo $NET|cut -d/ -f1`
